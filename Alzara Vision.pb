@@ -108,6 +108,8 @@ Enumeration Gadgets
   #TXT_STATUS_IMGSZ  
   #BTN_REMOVE_ITEM
   #BTN_RELOAD_LIST  
+  #BTN_SORT_AZ
+  
 EndEnumeration
 
 Enumeration Menus
@@ -726,7 +728,6 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
   StringGadget(#STR_FOLDER, #PAD, 30, #CONTENT_W - 90, 25, "", #PB_String_ReadOnly)
   ButtonGadget(#BTN_BROWSE, #PAD + #CONTENT_W - 80, 30, 80, 25, "Browse...")
   
-  ; List with arrow buttons on right side
   #LIST_W = #CONTENT_W - 40
   #ARROW_X = #PAD + #LIST_W + 5
   #LIST_H = #CHK_Y - 105
@@ -741,11 +742,20 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
   ButtonGadget(#BTN_MOVE_UP, #ARROW_X, #ARROW_MID - 34, 30, 30, Chr($25B2))
   ButtonGadget(#BTN_MOVE_DOWN, #ARROW_X, #ARROW_MID + 4, 30, 30, Chr($25BC))
   
-  ; Remove and Reload buttons (below list, right-aligned)
-  ButtonGadget(#BTN_RELOAD_LIST, #PAD + #LIST_W - 68, #LIST_BOTTOM + 4, 30, 26, Chr($21BB))
-  SetGadgetColor(#BTN_RELOAD_LIST, #PB_Gadget_FrontColor, RGB(60, 160, 60))
-  ButtonGadget(#BTN_REMOVE_ITEM, #PAD + #LIST_W - 34, #LIST_BOTTOM + 4, 30, 26, Chr($274C))
+  ; Toolbar below list (right-aligned): Sort, Reload, Remove
+  #TB_Y = #LIST_BOTTOM + 4
+  #TB_BTN_W = 30
+  #TB_BTN_H = 26
+  #TB_GAP = 4
+  #TB_RIGHT = #PAD + #LIST_W
+  
+  ButtonGadget(#BTN_REMOVE_ITEM, #TB_RIGHT - #TB_BTN_W, #TB_Y, #TB_BTN_W, #TB_BTN_H, Chr($274C))
   SetGadgetColor(#BTN_REMOVE_ITEM, #PB_Gadget_FrontColor, RGB(200, 60, 60))
+  
+  ButtonGadget(#BTN_RELOAD_LIST, #TB_RIGHT - #TB_BTN_W * 2 - #TB_GAP, #TB_Y, #TB_BTN_W, #TB_BTN_H, Chr($21BB))
+  SetGadgetColor(#BTN_RELOAD_LIST, #PB_Gadget_FrontColor, RGB(60, 160, 60))
+  
+  ButtonGadget(#BTN_SORT_AZ, #TB_RIGHT - #TB_BTN_W * 3 - #TB_GAP * 2, #TB_Y, #TB_BTN_W, #TB_BTN_H, "A" + Chr($2193))
   
   ; --- Bottom-pinned ---
   CheckBoxGadget(#CHK_CUSTOM_SAVE, #PAD, #CHK_Y, 400, 22, "Choose a different save location")
@@ -972,6 +982,7 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
           Case #BTN_MOVE_DOWN : MoveItemDown()
           Case #BTN_REMOVE_ITEM : RemoveSelectedItem()
           Case #BTN_RELOAD_LIST : ReloadFolder()
+          Case #BTN_SORT_AZ : DoSortToggle()
           Case #LIST_VIDEOS
             If EventType() = #PB_EventType_LeftDoubleClick
               PlaySelectedVideo()
@@ -1033,8 +1044,8 @@ EndIf
     
 
 ; IDE Options = PureBasic 6.20 (Windows - x64)
-; CursorPosition = 738
-; FirstLine = 716
+; CursorPosition = 988
+; FirstLine = 961
 ; Folding = ----
 ; EnableXP
 ; DPIAware
