@@ -5,3 +5,5 @@ dist/
 *.log
 .vscode/
 ffmpeg.exe
+alzara_debug.log
+Alzara Visions.exe
