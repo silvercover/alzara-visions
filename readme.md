@@ -13,6 +13,20 @@
 - **Real-time Progress** -- Progress bar and status updates during all operations.
 - **Cancel Anytime** -- All operations can be cancelled mid-process.
 
+## Screenshots
+
+| Merge Video | Video Size |
+|:-----------:|:----------:|
+| ![Merge Video](screenshots/merge-video-screenshot.jpg) | ![Video Size](screenshots/video-size-screenshot.jpg) |
+
+| Extract Audio | Image Convert |
+|:-------------:|:-------------:|
+| ![Extract Audio](screenshots/extract-audio-screenshot.jpg) | ![Image Convert](screenshots/image-convert-screenshot.jpg) |
+
+| Image Size |
+|:----------:|
+| ![Image Size](screenshots/image-size-screenshot.jpg) |
+
 ## Requirements
 
 - Windows 7 or later (Windows 10/11 recommended)
