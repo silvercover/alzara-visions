@@ -39,8 +39,8 @@
    - https://www.gyan.dev/ffmpeg/builds/
    - Get the **essentials build** (static, release).
    - Extract the archive and locate `ffmpeg.exe` inside the `bin` folder.
-3. Place `ffmpeg.exe` in the **same folder** as `AlzaraVision.exe`.
-4. Run `AlzaraVision.exe`.
+3. Place `ffmpeg.exe` in the **same folder** as `Alzara Vision.exe`.
+4. Run `Alzara Vision.exe`.
 
 Your folder should look like this:
 
