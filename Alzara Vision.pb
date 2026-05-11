@@ -1,6 +1,6 @@
 ﻿; ======================================================================
 ; Project : Alzara Vision
-; Version : 1.3
+; Version : 1.4.1
 ; Author  : Hamed Takmil (aka silvercover)
 ; Language: PureBasic 5.x / 6.x (Windows)
 ; Backend : ffmpeg.exe (place next to this executable)
@@ -9,7 +9,7 @@
 EnableExplicit
 
 #WIN_MAIN = 0
-#APP_VERSION = "1.4"
+#APP_VERSION = "1.4.1"
 #APP_NAME    = "Alzara Vision"
 #APP_TITLE   = #APP_NAME + " " + #APP_VERSION
 #APP_AUTHOR  = "Hamed Takmil (aka silvercover)"
@@ -709,7 +709,7 @@ WriteLog("=== " + #APP_TITLE + " Started ===")
 #PL_X    = #OF_X - #PL_W - #BG
 
 If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB_Window_ScreenCentered | #PB_Window_MinimizeGadget)
-  
+  EnableWindowDrop(#WIN_MAIN, #PB_Drop_Files, #PB_Drag_Copy)
   ; --- Menu Bar ---
   CreateMenu(0, WindowID(#WIN_MAIN))
   MenuTitle("Tools")
@@ -955,7 +955,59 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
         WriteLog("=== " + #APP_NAME + " Closed ===")
         If gShlwapi : CloseLibrary(gShlwapi) : EndIf
         End
-        
+      
+      Case #PB_Event_WindowDrop
+          Define dropFiles.s = EventDropFiles()
+          Define droppedItem.s = StringField(dropFiles, 1, #LF$) 
+          
+          If droppedItem <> ""
+              Define activeTab = GetGadgetState(#PANEL_TABS)
+              
+              Select activeTab
+                 Case 0
+                      If FileSize(droppedItem) = -2
+                          gSourceFolder = droppedItem
+                          If Right(gSourceFolder, 1) <> "\" And Right(gSourceFolder, 1) <> "/"
+                              gSourceFolder + "\"
+                          EndIf                          
+                          ; (اختیاری) اگر تابع شما به تغییر مسیر جاری ویندوز وابسته است خط زیر را هم از کامنت خارج کنید:
+                          ; SetCurrentDirectory(gSourceFolder)
+                          ; -------------------------------------
+                          
+                          SetGadgetText(#STR_FOLDER, gSourceFolder)
+                          ScanFolder(gSourceFolder)
+                      Else
+                          MessageRequester("Alzara Vision", "Please drag and drop a FOLDER for Merge Video.")
+                      EndIf
+                      
+                  Case 1 
+                      If FileSize(droppedItem) >= 0
+                          LoadInputFile(droppedItem)
+                      EndIf
+                      
+                  Case 2
+                      If FileSize(droppedItem) >= 0
+                          LoadAudioInputFile(droppedItem)
+                      EndIf
+                      
+                  Case 3
+                      If GetGadgetState(#COMBO_IMG_MODE) = 0
+                          If FileSize(droppedItem) >= 0
+                              SetGadgetText(#STR_IMG_INPUT, droppedItem)
+                          EndIf
+                      Else
+                          If FileSize(droppedItem) = -2
+                              SetGadgetText(#STR_IMG_INPUT, droppedItem)
+                          EndIf
+                      EndIf
+                      
+                  Case 4
+                      If FileSize(droppedItem) >= 0
+                          SetGadgetText(#STR_IMGSZ_INPUT, droppedItem)
+                      EndIf
+              EndSelect
+          EndIf
+      ; ---------------------------------------        
       Case #PB_Event_Menu
         Select EventMenu()
           Case #MENU_OPEN_LOG
@@ -1044,8 +1096,7 @@ EndIf
     
 
 ; IDE Options = PureBasic 6.20 (Windows - x64)
-; CursorPosition = 988
-; FirstLine = 961
+; CursorPosition = 11
 ; Folding = ----
 ; EnableXP
 ; DPIAware

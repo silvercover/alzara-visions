@@ -437,8 +437,8 @@ Procedure DoMerge()
 EndProcedure
 
 ; IDE Options = PureBasic 6.20 (Windows - x64)
-; CursorPosition = 437
-; FirstLine = 384
+; CursorPosition = 258
+; FirstLine = 248
 ; Folding = ----
 ; EnableXP
 ; DPIAware
