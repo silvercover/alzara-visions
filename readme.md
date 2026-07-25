@@ -1,12 +1,13 @@
 # Alzara Vision
 
-**Alzara Vision** is a free, lightweight, Windows-based multimedia toolkit for video and image processing. It provides a simple graphical interface for common tasks such as merging video files, reducing video size, extracting audio, converting image formats, and resizing images. All media processing is powered by FFmpeg.
+**Alzara Vision** is a free, lightweight, Windows-based multimedia toolkit for video and image processing. It provides a simple graphical interface for common tasks such as merging video files, reducing video size, extracting audio, converting audio files, converting image formats, and resizing images. All media processing is powered by FFmpeg.
 
 ## Features
 
 - **Merge Video** -- Merge multiple MP4 files in a folder into a single video file with natural sort order.
 - **Video Size** -- Reduce video file size by adjusting quality, bitrate, and dimensions using H.265 (HEVC) encoding. Includes options for removing audio and reducing background noise.
 - **Extract Audio** -- Extract audio from video files in various formats: MP3, AAC/M4A, WAV, FLAC, OGG, OPUS, or direct copy without re-encoding.
+- **Audio Convert** -- Convert audio files between popular formats (MP3, M4A, WAV, FLAC, OGG). Edit ID3 metadata tags (Title, Artist, Genre, etc.) and customize bitrate, sample rate, and audio channels.
 - **Image Convert** -- Convert images between formats. Supports HEIC, HEIF, PNG, WEBP, BMP, and TIFF as input, with JPG, PNG, and WEBP as output. Single file and batch (folder) modes available.
 - **Image Size** -- Resize images by percentage or manual dimensions with aspect ratio lock. Supports multiple scaling algorithms: Fast Bilinear, Bilinear, Bicubic, and Lanczos.
 - **Unicode Support** -- Full support for non-Latin filenames (Persian, Arabic, Chinese, etc.).
@@ -19,13 +20,14 @@
 |:-----------:|:----------:|
 | ![Merge Video](screenshots/merge-video-screenshot.jpg) | ![Video Size](screenshots/video-size-screenshot.jpg) |
 
-| Extract Audio | Image Convert |
+| Extract Audio | Audio Convert |
 |:-------------:|:-------------:|
-| ![Extract Audio](screenshots/extract-audio-screenshot.jpg) | ![Image Convert](screenshots/image-convert-screenshot.jpg) |
+| ![Extract Audio](screenshots/extract-audio-screenshot.jpg) | ![Audio Convert](screenshots/audio-convert-screenshot.jpg) |
 
-| Image Size |
-|:----------:|
-| ![Image Size](screenshots/image-size-screenshot.jpg) |
+| Image Convert | Image Size |
+|:-------------:|:----------:|
+| ![Image Convert](screenshots/image-convert-screenshot.jpg) | ![Image Size](screenshots/image-size-screenshot.jpg) |
+
 
 ## Requirements
 
@@ -47,7 +49,6 @@ Your folder should look like this:
 - AlzaraVision.exe 
 - ffmpeg.exe
 
-
 ## Usage
 
 Open the application and select the desired tab:
@@ -55,6 +56,7 @@ Open the application and select the desired tab:
 - **Merge Video** -- Select a folder containing MP4 parts. The files are listed in natural order. Click "Start Merge" to combine them.
 - **Video Size** -- Select an MP4 file. Enable quality reduction, dimension reduction, audio removal, or noise reduction as needed. Click "Reduce".
 - **Extract Audio** -- Select a video file. Choose the output audio format. Click "Extract Audio".
+- **Audio Convert** -- Select an audio file. Choose the output format, adjust settings (bitrate, sample rate, channels), and edit ID3 metadata if needed. Click "Convert Audio".
 - **Image Convert** -- Choose single file or folder mode. Select input and output format. Click "Convert".
 - **Image Size** -- Select an image file. Adjust dimensions using the slider or manual input. Choose a scaling algorithm. Click "Resize".
 
@@ -71,13 +73,14 @@ This software is provided "AS IS", without warranty of any kind, express or impl
 
 # Alzara Vision (فارسی)
 
-**Alzara Vision** یک ابزار رایگان، سبک و مبتنی بر ویندوز برای پردازش ویدیو و تصویر است. این برنامه یک رابط گرافیکی ساده برای کارهای رایج مانند ادغام فایل‌های ویدیویی، کاهش حجم ویدیو، استخراج صدا، تبدیل فرمت تصویر و تغییر اندازه تصویر فراهم می‌کند. تمام پردازش‌های رسانه‌ای توسط FFmpeg انجام می‌شود.
+**Alzara Vision** یک ابزار رایگان، سبک و مبتنی بر ویندوز برای پردازش ویدیو و تصویر است. این برنامه یک رابط گرافیکی ساده برای کارهای رایج مانند ادغام فایل‌های ویدیویی، کاهش حجم ویدیو، استخراج صدا، تبدیل فایل‌های صوتی، تبدیل فرمت تصویر و تغییر اندازه تصویر فراهم می‌کند. تمام پردازش‌های رسانه‌ای توسط FFmpeg انجام می‌شود.
 
 ## ویژگی‌ها
 
 - **ادغام ویدیو** -- ادغام چندین فایل MP4 موجود در یک پوشه به یک فایل ویدیویی واحد با ترتیب طبیعی.
 - **کاهش حجم ویدیو** -- کاهش حجم فایل ویدیویی با تنظیم کیفیت، بیت‌ریت و ابعاد با استفاده از کدک H.265 (HEVC). شامل گزینه‌های حذف صدا و کاهش نویز پس‌زمینه.
 - **استخراج صدا** -- استخراج صدا از فایل‌های ویدیویی در فرمت‌های مختلف: MP3، AAC/M4A، WAV، FLAC، OGG، OPUS یا کپی مستقیم بدون تبدیل مجدد.
+- **تبدیل صدا (Audio Convert)** -- تبدیل فایل‌های صوتی بین فرمت‌های رایج (MP3, M4A, WAV, FLAC, OGG). ویرایش برچسب‌های متادیتا (عنوان، هنرمند، ژانر و غیره) و تنظیم سفارشی بیت‌ریت، سمپل‌ریت و کانال‌های صوتی.
 - **تبدیل تصویر** -- تبدیل تصاویر بین فرمت‌های مختلف. پشتیبانی از HEIC، HEIF، PNG، WEBP، BMP و TIFF به عنوان ورودی و JPG، PNG و WEBP به عنوان خروجی. حالت تکی و دسته‌ای (پوشه) موجود است.
 - **تغییر اندازه تصویر** -- تغییر اندازه تصاویر بر اساس درصد یا ابعاد دستی با قفل نسبت تصویر. پشتیبانی از الگوریتم‌های مختلف: Fast Bilinear، Bilinear، Bicubic و Lanczos.
 - **پشتیبانی از یونیکد** -- پشتیبانی کامل از نام فایل‌های غیرلاتین (فارسی، عربی، چینی و غیره).
@@ -104,7 +107,6 @@ This software is provided "AS IS", without warranty of any kind, express or impl
 - AlzaraVision.exe 
 - ffmpeg.exe
 
-
 ## نحوه استفاده
 
 برنامه را باز کنید و تب مورد نظر را انتخاب کنید:
@@ -112,6 +114,7 @@ This software is provided "AS IS", without warranty of any kind, express or impl
 - **ادغام ویدیو** -- پوشه‌ای حاوی قطعات MP4 را انتخاب کنید. فایل‌ها با ترتیب طبیعی لیست می‌شوند. روی "Start Merge" کلیک کنید.
 - **کاهش حجم ویدیو** -- یک فایل MP4 انتخاب کنید. کاهش کیفیت، کاهش ابعاد، حذف صدا یا کاهش نویز را فعال کنید. روی "Reduce" کلیک کنید.
 - **استخراج صدا** -- یک فایل ویدیویی انتخاب کنید. فرمت خروجی صوتی را انتخاب کنید. روی "Extract Audio" کلیک کنید.
+- **تبدیل صدا** -- یک فایل صوتی انتخاب کنید. فرمت خروجی را انتخاب کرده، تنظیمات (بیت‌ریت، سمپل‌ریت، کانال‌ها) را تغییر دهید و در صورت نیاز متادیتاها را ویرایش کنید. روی "Convert Audio" کلیک کنید.
 - **تبدیل تصویر** -- حالت تکی یا پوشه را انتخاب کنید. ورودی و فرمت خروجی را مشخص کنید. روی "Convert" کلیک کنید.
 - **تغییر اندازه تصویر** -- یک فایل تصویری انتخاب کنید. ابعاد را با اسلایدر یا ورود دستی تنظیم کنید. الگوریتم مقیاس‌گذاری را انتخاب کنید. روی "Resize" کلیک کنید.
 
