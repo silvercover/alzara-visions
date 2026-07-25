@@ -1,6 +1,6 @@
 ﻿; ======================================================================
 ; Project : Alzara Vision
-; Version : 1.4.1
+; Version : 1.5
 ; Author  : Hamed Takmil (aka silvercover)
 ; Language: PureBasic 5.x / 6.x (Windows)
 ; Backend : ffmpeg.exe (place next to this executable)
@@ -9,7 +9,7 @@
 EnableExplicit
 
 #WIN_MAIN = 0
-#APP_VERSION = "1.4.1"
+#APP_VERSION = "1.5.0"
 #APP_NAME    = "Alzara Vision"
 #APP_TITLE   = #APP_NAME + " " + #APP_VERSION
 #APP_AUTHOR  = "Hamed Takmil (aka silvercover)"
@@ -109,6 +109,26 @@ Enumeration Gadgets
   #BTN_REMOVE_ITEM
   #BTN_RELOAD_LIST  
   #BTN_SORT_AZ
+  ; --- Audio Convert Tab ---
+  #STR_AC_INPUT
+  #BTN_BROWSE_AC
+  #TXT_AC_INFO
+  #COMBO_AC_FORMAT
+  #COMBO_AC_BITRATE
+  #COMBO_AC_SAMPLERATE
+  #COMBO_AC_CHANNELS
+  #STR_AC_META_TITLE
+  #STR_AC_META_ARTIST
+  #STR_AC_META_ALBUM
+  #STR_AC_META_YEAR
+  #CHK_CUSTOM_SAVE_AC
+  #BTN_AC_CONVERT
+  #BTN_CANCEL_AC
+  #BTN_OPEN_FOLDER_AC
+  #PROG_AC
+  #TXT_STATUS_AC
+  #STR_AC_META_GENRE
+  #STR_AC_META_DESC
   
 EndEnumeration
 
@@ -680,6 +700,7 @@ EndProcedure
 XIncludeFile "MergeVideo.pb"
 XIncludeFile "ImageConvert.pb"
 XIncludeFile "ImageSize.pb"
+XIncludeFile "AudioConvert.pb"
 
 ; =====================================================================
 ; MAIN UI
@@ -846,8 +867,82 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
   ProgressBarGadget(#PROG_AUDIO, #PAD, #PROG_Y, #CONTENT_W, 14, 0, 100)
   TextGadget(#TXT_STATUS_AUDIO, #PAD, #STAT_Y, #CONTENT_W, 18, "Ready. Select a video file to extract audio.")
   
-    ; ============================================
-  ; TAB 4: IMAGE CONVERT
+  ; ============================================
+  ; TAB 4: AUDIO CONVERT
+  ; ============================================
+  AddGadgetItem(#PANEL_TABS, -1, "Audio Convert")
+  
+  TextGadget(#PB_Any, #PAD, 10, 120, 20, "Input Audio:")
+  StringGadget(#STR_AC_INPUT, #PAD, 30, #CONTENT_W - 90, 25, "", #PB_String_ReadOnly)
+  ButtonGadget(#BTN_BROWSE_AC, #PAD + #CONTENT_W - 80, 30, 80, 25, "Browse...")
+  TextGadget(#TXT_AC_INFO, #PAD, 62, #CONTENT_W, 18, "")
+  
+  ; Settings Row
+  TextGadget(#PB_Any, #PAD, 92, 60, 20, "Format:")
+  ComboBoxGadget(#COMBO_AC_FORMAT, 70, 89, 90, 25)
+  AddGadgetItem(#COMBO_AC_FORMAT, -1, "MP3")
+  AddGadgetItem(#COMBO_AC_FORMAT, -1, "M4A")
+  AddGadgetItem(#COMBO_AC_FORMAT, -1, "WAV")
+  AddGadgetItem(#COMBO_AC_FORMAT, -1, "FLAC")
+  AddGadgetItem(#COMBO_AC_FORMAT, -1, "OGG")
+  SetGadgetState(#COMBO_AC_FORMAT, 0)
+  
+  TextGadget(#PB_Any, 175, 92, 50, 20, "Bitrate:")
+  ComboBoxGadget(#COMBO_AC_BITRATE, 225, 89, 80, 25)
+  AddGadgetItem(#COMBO_AC_BITRATE, -1, "Auto")
+  AddGadgetItem(#COMBO_AC_BITRATE, -1, "64k")
+  AddGadgetItem(#COMBO_AC_BITRATE, -1, "128k")
+  AddGadgetItem(#COMBO_AC_BITRATE, -1, "192k")
+  AddGadgetItem(#COMBO_AC_BITRATE, -1, "256k")
+  AddGadgetItem(#COMBO_AC_BITRATE, -1, "320k")
+  SetGadgetState(#COMBO_AC_BITRATE, 0)
+  
+  TextGadget(#PB_Any, 320, 92, 75, 20, "Sample Rate:")
+  ComboBoxGadget(#COMBO_AC_SAMPLERATE, 395, 89, 80, 25)
+  AddGadgetItem(#COMBO_AC_SAMPLERATE, -1, "Auto")
+  AddGadgetItem(#COMBO_AC_SAMPLERATE, -1, "22050")
+  AddGadgetItem(#COMBO_AC_SAMPLERATE, -1, "44100")
+  AddGadgetItem(#COMBO_AC_SAMPLERATE, -1, "48000")
+  SetGadgetState(#COMBO_AC_SAMPLERATE, 0)
+  
+  TextGadget(#PB_Any, 490, 92, 60, 20, "Channels:")
+  ComboBoxGadget(#COMBO_AC_CHANNELS, 550, 89, 70, 25)
+  AddGadgetItem(#COMBO_AC_CHANNELS, -1, "Auto")
+  AddGadgetItem(#COMBO_AC_CHANNELS, -1, "Mono")
+  AddGadgetItem(#COMBO_AC_CHANNELS, -1, "Stereo")
+  SetGadgetState(#COMBO_AC_CHANNELS, 0)
+  
+  FrameGadget(#PB_Any, #PAD, 130, #CONTENT_W, 135, "Metadata (ID3 Tags)")
+  
+  TextGadget(#PB_Any, 25, 155, 40, 20, "Title:")
+  StringGadget(#STR_AC_META_TITLE, 65, 152, 230, 22, "")
+  TextGadget(#PB_Any, 320, 155, 40, 20, "Artist:")
+  StringGadget(#STR_AC_META_ARTIST, 365, 152, 230, 22, "")
+  
+  TextGadget(#PB_Any, 25, 190, 40, 20, "Album:")
+  StringGadget(#STR_AC_META_ALBUM, 65, 187, 230, 22, "")
+  TextGadget(#PB_Any, 320, 190, 40, 20, "Year:")
+  StringGadget(#STR_AC_META_YEAR, 365, 187, 100, 22, "")
+  
+  ; سطر جدید برای Genre و Description
+  TextGadget(#PB_Any, 25, 225, 40, 20, "Genre:")
+  StringGadget(#STR_AC_META_GENRE, 65, 222, 120, 22, "")
+  TextGadget(#PB_Any, 200, 225, 65, 20, "Description:")
+  StringGadget(#STR_AC_META_DESC, 270, 222, 325, 22, "")
+  
+  ; --- Bottom-pinned ---
+  CheckBoxGadget(#CHK_CUSTOM_SAVE_AC, #PAD, #CHK_Y, 400, 22, "Choose a different save location")
+  ButtonGadget(#BTN_AC_CONVERT, #PAD, #BTN_Y, 140, #BH, "Convert Audio")
+  DisableGadget(#BTN_AC_CONVERT, #True)
+  ButtonGadget(#BTN_CANCEL_AC, #PAD + 148, #BTN_Y, 90, #BH, "Cancel")
+  HideGadget(#BTN_CANCEL_AC, #True)
+  ButtonGadget(#BTN_OPEN_FOLDER_AC, #OF_X, #BTN_Y, #OF_W, #BH, "Open Folder")
+  HideGadget(#BTN_OPEN_FOLDER_AC, #True)
+  ProgressBarGadget(#PROG_AC, #PAD, #PROG_Y, #CONTENT_W, 14, 0, 100)
+  TextGadget(#TXT_STATUS_AC, #PAD, #STAT_Y, #CONTENT_W, 18, "Ready. Select an audio file.")
+  
+  ; ============================================
+  ; TAB 5: IMAGE CONVERT
   ; ============================================
   AddGadgetItem(#PANEL_TABS, -1, "Image Convert")
   
@@ -886,7 +981,7 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
   TextGadget(#TXT_STATUS_IMG, #PAD, #STAT_Y, #CONTENT_W, 18, "Ready. Select input and click Convert.")
   
   ; ============================================
-  ; TAB 5: IMAGE SIZE
+  ; TAB 6: IMAGE SIZE
   ; ============================================
   AddGadgetItem(#PANEL_TABS, -1, "Image Size")
   
@@ -955,58 +1050,88 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
         WriteLog("=== " + #APP_NAME + " Closed ===")
         If gShlwapi : CloseLibrary(gShlwapi) : EndIf
         End
-      
-      Case #PB_Event_WindowDrop
-          Define dropFiles.s = EventDropFiles()
-          Define droppedItem.s = StringField(dropFiles, 1, #LF$) 
-          
-          If droppedItem <> ""
-              Define activeTab = GetGadgetState(#PANEL_TABS)
-              
-              Select activeTab
-                 Case 0
-                      If FileSize(droppedItem) = -2
-                          gSourceFolder = droppedItem
-                          If Right(gSourceFolder, 1) <> "\" And Right(gSourceFolder, 1) <> "/"
-                              gSourceFolder + "\"
-                          EndIf                          
-                          ; (اختیاری) اگر تابع شما به تغییر مسیر جاری ویندوز وابسته است خط زیر را هم از کامنت خارج کنید:
-                          ; SetCurrentDirectory(gSourceFolder)
-                          ; -------------------------------------
+        
+  Case #PB_Event_WindowDrop
+            Define dropFiles.s = EventDropFiles()
+            Define droppedItem.s = StringField(dropFiles, 1, #LF$) 
+            
+            If droppedItem <> ""
+                Define activeTab = GetGadgetState(#PANEL_TABS)
+                
+                Select activeTab
+                   Case 0 ; Merge Video
+                        If FileSize(droppedItem) = -2
+                            gSourceFolder = droppedItem
+                            If Right(gSourceFolder, 1) <> "\" And Right(gSourceFolder, 1) <> "/"
+                                gSourceFolder + "\"
+                            EndIf                          
+                            ; (اختیاری) اگر تابع شما به تغییر مسیر جاری ویندوز وابسته است خط زیر را هم از کامنت خارج کنید:
+                            ; SetCurrentDirectory(gSourceFolder)
+                            ; -------------------------------------
+                            
+                            SetGadgetText(#STR_FOLDER, gSourceFolder)
+                            ScanFolder(gSourceFolder)
+                        Else
+                            MessageRequester("Alzara Vision", "Please drag and drop a FOLDER for Merge Video.")
+                        EndIf
+                        
+                    Case 1 ; Video Size
+                        If FileSize(droppedItem) >= 0
+                            LoadInputFile(droppedItem)
+                        EndIf
+                        
+                    Case 2 ; Extract Audio
+                        If FileSize(droppedItem) >= 0
+                            LoadAudioInputFile(droppedItem)
+                        EndIf
+                        
+                   Case 3 ; Audio Convert (تب جدید)
+                      If FileSize(droppedItem) >= 0
+                          gACInputPath = droppedItem
+                          SetGadgetText(#STR_AC_INPUT, droppedItem)
                           
-                          SetGadgetText(#STR_FOLDER, gSourceFolder)
-                          ScanFolder(gSourceFolder)
-                      Else
-                          MessageRequester("Alzara Vision", "Please drag and drop a FOLDER for Merge Video.")
+                          SetGadgetText(#TXT_STATUS_AC, "Analyzing metadata...")
+                          SetGadgetText(#TXT_AC_INFO, "Analyzing...")
+                          gACFileSize = FileSize(droppedItem)
+                          ProbeAudioConvertInfo(droppedItem)
+                          
+                          ; ساخت متن اطلاعات فایل به صورت پویا برای درگ و دراپ
+                          Define acInfo.s = FormatFileSize(gACFileSize) + "  |  " + UCase(GetExtensionPart(droppedItem))
+                          If gACDuration > 0.0 : acInfo + "  |  " + Str(Int(gACDuration / 60)) + "m " + Str(Int(gACDuration) % 60) + "s" : EndIf
+                          If gACBitrate > 0 : acInfo + "  |  " + Str(gACBitrate) + " kb/s" : EndIf
+                          If gACSampleRate > 0 : acInfo + "  |  " + Str(gACSampleRate) + " Hz" : EndIf
+                          If gACChannels <> "" : acInfo + "  |  " + UCase(Left(gACChannels, 1)) + LCase(Mid(gACChannels, 2)) : EndIf
+                          
+                          SetGadgetText(#TXT_AC_INFO, acInfo)
+                          DisableGadget(#BTN_AC_CONVERT, #False)
+                          SetGadgetText(#TXT_STATUS_AC, "Ready. Adjust settings and click Convert.")
                       EndIf
-                      
-                  Case 1 
-                      If FileSize(droppedItem) >= 0
-                          LoadInputFile(droppedItem)
-                      EndIf
-                      
-                  Case 2
-                      If FileSize(droppedItem) >= 0
-                          LoadAudioInputFile(droppedItem)
-                      EndIf
-                      
-                  Case 3
-                      If GetGadgetState(#COMBO_IMG_MODE) = 0
-                          If FileSize(droppedItem) >= 0
-                              SetGadgetText(#STR_IMG_INPUT, droppedItem)
-                          EndIf
-                      Else
-                          If FileSize(droppedItem) = -2
-                              SetGadgetText(#STR_IMG_INPUT, droppedItem)
-                          EndIf
-                      EndIf
-                      
-                  Case 4
-                      If FileSize(droppedItem) >= 0
-                          SetGadgetText(#STR_IMGSZ_INPUT, droppedItem)
-                      EndIf
-              EndSelect
-          EndIf
+                        
+                    Case 4 ; Image Convert (تغییر ایندکس از 3 به 4)
+                        If GetGadgetState(#COMBO_IMG_MODE) = 0
+                            If FileSize(droppedItem) >= 0
+                                gImgInputPath = droppedItem
+                                gImgFolderPath = ""
+                                SetGadgetText(#STR_IMG_INPUT, droppedItem)
+                            EndIf
+                        Else
+                            If FileSize(droppedItem) = -2
+                                gImgFolderPath = droppedItem
+                                gImgInputPath = ""
+                                SetGadgetText(#STR_IMG_INPUT, droppedItem)
+                            EndIf
+                        EndIf
+                        
+                    Case 5 ; Image Size (تغییر ایندکس از 4 به 5)
+                        If FileSize(droppedItem) >= 0
+                            gImgSzInputPath = droppedItem
+                            SetGadgetText(#STR_IMGSZ_INPUT, droppedItem)
+                            
+                            ; برای کامل شدن پروسه، می‌توانید وضعیت آنالیز عکس را هم اینجا اضافه کنید
+                            ; ProbeImageInfo(droppedItem)
+                        EndIf
+                EndSelect
+            EndIf
       ; ---------------------------------------        
       Case #PB_Event_Menu
         Select EventMenu()
@@ -1067,6 +1192,11 @@ If OpenWindow(#WIN_MAIN, 0, 0, 672, 530, #APP_TITLE, #PB_Window_SystemMenu | #PB
           Case #BTN_PLAY_AUDIO
             If gLastSavePathAudio <> "" : RunProgram(gLastSavePathAudio, "", "") : EndIf
           
+          ; --- Audio Convert ---
+          Case #BTN_BROWSE_AC : LoadAudioConvertInput()
+          Case #BTN_AC_CONVERT : DoAudioConvert()
+          Case #BTN_OPEN_FOLDER_AC : OpenFolder(gACLastSavePath)
+            
           ; --- Image Convert ---
           Case #COMBO_IMG_MODE : OnImgModeChange()
           Case #BTN_BROWSE_IMG : LoadImageInput()
@@ -1096,11 +1226,12 @@ EndIf
     
 
 ; IDE Options = PureBasic 6.20 (Windows - x64)
-; CursorPosition = 11
+; CursorPosition = 1087
+; FirstLine = 1084
 ; Folding = ----
 ; EnableXP
 ; DPIAware
 ; UseIcon = icon.ico
-; Executable = Alzara Visions.exe
+; Executable = _Alzara Visions.exe
 ; IncludeVersionInfo
 ; VersionField0 = 1.0
